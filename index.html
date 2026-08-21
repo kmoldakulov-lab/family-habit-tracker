@@ -1,0 +1,903 @@
+<title>Семейный трекер привычек</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#F2F4EA;
+    --surface:#FDFCF5;
+    --surface-2:#FFFFFF;
+    --ink:#1E2A22;
+    --muted:#5B6A5D;
+    --line:#D9DCC7;
+    --line-soft:#E6E8D9;
+    --accent:#24593F;
+    --accent-ink:#F4F8F2;
+    --accent-soft:#E1EBDF;
+    --gold:#B87A1F;
+    --gold-soft:#F4E5C8;
+    --danger:#A6432F;
+
+    --coral:#B85B3B;
+    --coral-soft:#F1DFD3;
+    --teal:#276476;
+    --teal-soft:#DCE9EB;
+    --plum:#6B4A73;
+    --plum-soft:#E7DEE9;
+
+    --shadow: 0 1px 2px rgba(30,42,34,0.06), 0 8px 24px -12px rgba(30,42,34,0.18);
+    --radius: 14px;
+
+    --font-display:"Fraunces", ui-serif, Georgia, serif;
+    --font-body:"Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#10160E;
+      --surface:#161F14;
+      --surface-2:#1B2519;
+      --ink:#E7ECE2;
+      --muted:#9FAE9B;
+      --line:#2B362A;
+      --line-soft:#232E21;
+      --accent:#6FCB8F;
+      --accent-ink:#0E1B12;
+      --accent-soft:#1E3226;
+      --gold:#E8AA4B;
+      --gold-soft:#3A2D14;
+      --danger:#E08469;
+
+      --coral:#E08A66;
+      --coral-soft:#3B2A20;
+      --teal:#6FC0D3;
+      --teal-soft:#1E323A;
+      --plum:#C09BCB;
+      --plum-soft:#2F2536;
+
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 28px -14px rgba(0,0,0,0.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#10160E;
+    --surface:#161F14;
+    --surface-2:#1B2519;
+    --ink:#E7ECE2;
+    --muted:#9FAE9B;
+    --line:#2B362A;
+    --line-soft:#232E21;
+    --accent:#6FCB8F;
+    --accent-ink:#0E1B12;
+    --accent-soft:#1E3226;
+    --gold:#E8AA4B;
+    --gold-soft:#3A2D14;
+    --danger:#E08469;
+
+    --coral:#E08A66;
+    --coral-soft:#3B2A20;
+    --teal:#6FC0D3;
+    --teal-soft:#1E323A;
+    --plum:#C09BCB;
+    --plum-soft:#2F2536;
+
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 28px -14px rgba(0,0,0,0.55);
+  }
+
+  *{box-sizing:border-box;}
+  html{background:var(--paper);}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:16px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+
+  .page{
+    max-width:1180px;
+    margin:0 auto;
+    padding:28px 20px 64px;
+  }
+
+  /* ---------- Masthead ---------- */
+  .masthead{
+    padding:8px 4px 28px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:28px;
+  }
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:0.10em;
+    text-transform:uppercase;
+    color:var(--accent);
+    font-weight:600;
+  }
+  h1.title{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(28px, 4vw, 44px);
+    line-height:1.08;
+    margin:8px 0 10px;
+    text-wrap:balance;
+    max-width:16ch;
+  }
+  .lede{
+    color:var(--muted);
+    max-width:62ch;
+    font-size:16px;
+    margin:0 0 14px;
+  }
+  .week-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--ink);
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    padding:6px 12px;
+    border-radius:999px;
+  }
+  .week-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+
+  /* ---------- Rules box ---------- */
+  .rules{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 22px;
+    margin-bottom:32px;
+    box-shadow:var(--shadow);
+  }
+  .rules h2{
+    font-family:var(--font-display);
+    font-size:19px;
+    font-weight:600;
+    margin:0 0 4px;
+  }
+  .rules .hint{
+    color:var(--muted);
+    font-size:12.5px;
+    margin:0 0 12px;
+  }
+  .rules-text{
+    outline:none;
+    font-size:14.5px;
+    color:var(--ink);
+  }
+  .rules-text p{margin:0 0 8px;}
+  .rules-text p:last-child{margin-bottom:0;}
+  .rules-text:focus{
+    background:var(--accent-soft);
+    border-radius:8px;
+    box-shadow:0 0 0 3px var(--accent-soft);
+  }
+
+  /* ---------- Cards grid ---------- */
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));
+    gap:22px;
+    margin-bottom:32px;
+    align-items:start;
+  }
+
+  .child-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .child-card .tab{
+    height:6px;
+    background:var(--child);
+  }
+  .card--preschool{--child:var(--coral); --child-soft:var(--coral-soft);}
+  .card--tween{--child:var(--teal); --child-soft:var(--teal-soft);}
+  .card--teen{--child:var(--plum); --child-soft:var(--plum-soft);}
+
+  .card-head{
+    padding:18px 20px 14px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:10px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .card-id .age-badge{
+    display:inline-block;
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:var(--child);
+    background:var(--child-soft);
+    padding:3px 8px;
+    border-radius:999px;
+    margin-bottom:6px;
+  }
+  .child-name{
+    font-family:var(--font-display);
+    font-size:22px;
+    font-weight:600;
+    outline:none;
+    min-width:2ch;
+  }
+  .child-name:focus{background:var(--child-soft); border-radius:6px; box-shadow:0 0 0 3px var(--child-soft);}
+  .balance-block{text-align:right;}
+  .balance-num{
+    font-family:var(--font-mono);
+    font-size:26px;
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+    color:var(--child);
+  }
+  .balance-unit{display:block; font-size:11px; color:var(--muted); margin-top:-2px;}
+
+  .card-body{padding:16px 20px 20px; display:flex; flex-direction:column; gap:16px;}
+
+  .table-scroll{overflow-x:auto; border:1px solid var(--line-soft); border-radius:10px;}
+  table.tracker{
+    border-collapse:collapse;
+    width:100%;
+    min-width:420px;
+    font-size:13.5px;
+  }
+  table.tracker th, table.tracker td{
+    padding:8px 8px;
+    text-align:center;
+    border-bottom:1px solid var(--line-soft);
+  }
+  table.tracker thead th{
+    font-family:var(--font-mono);
+    font-weight:500;
+    font-size:11px;
+    letter-spacing:0.03em;
+    color:var(--muted);
+    text-transform:uppercase;
+    background:var(--surface-2);
+  }
+  table.tracker td.cat-col, table.tracker th.cat-col{
+    text-align:left;
+    padding-left:10px;
+    white-space:nowrap;
+  }
+  table.tracker .pt{
+    font-family:var(--font-mono);
+    color:var(--muted);
+    font-size:11px;
+  }
+  table.tracker tbody tr:last-child td{border-bottom:none;}
+  table.tracker input[type="checkbox"]{
+    width:19px; height:19px;
+    accent-color:var(--child);
+    cursor:pointer;
+  }
+  table.tracker col.today-col{background:var(--child-soft);}
+  th.today, td.today{background:var(--child-soft);}
+
+  .week-total{
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+    font-size:13.5px;
+    color:var(--muted);
+  }
+  .week-total-num{
+    font-family:var(--font-mono);
+    font-weight:600;
+    font-size:16px;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+
+  .card-actions{display:flex; gap:8px; flex-wrap:wrap;}
+  button{
+    font-family:var(--font-body);
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--surface-2);
+    color:var(--ink);
+    padding:8px 12px;
+    cursor:pointer;
+    transition:transform 0.08s ease, background 0.15s ease;
+  }
+  button:hover{background:var(--line-soft);}
+  button:active{transform:translateY(1px);}
+  button.primary{
+    background:var(--child);
+    border-color:var(--child);
+    color:var(--surface-2);
+  }
+  button.primary:hover{filter:brightness(1.06);}
+  button.ghost{background:transparent;}
+  button.small{padding:5px 9px; font-size:12px; font-weight:500;}
+
+  .section-label{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 8px;
+  }
+
+  .rewards{display:flex; flex-direction:column; gap:6px;}
+  .reward-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:8px 10px;
+    background:var(--surface-2);
+    border:1px solid var(--line-soft);
+    border-radius:9px;
+  }
+  .reward-name{
+    outline:none;
+    font-size:13.5px;
+    flex:1;
+  }
+  .reward-name:focus{background:var(--child-soft); border-radius:5px;}
+  .reward-right{display:flex; align-items:center; gap:8px;}
+  .reward-cost{
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--child);
+    outline:none;
+    min-width:1.5ch;
+    text-align:right;
+  }
+  .reward-cost:focus{background:var(--child-soft); border-radius:5px;}
+  .reward-unit{font-size:11px; color:var(--muted);}
+
+  .local-hint{
+    font-size:11.5px;
+    color:var(--danger);
+    min-height:14px;
+    display:block;
+  }
+
+  .history{
+    font-size:12px;
+    color:var(--muted);
+    margin:0;
+    padding-left:0;
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    max-height:96px;
+    overflow-y:auto;
+  }
+  .history li{
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+    border-bottom:1px dashed var(--line-soft);
+    padding-bottom:3px;
+  }
+  .history li.empty{font-style:italic; border-bottom:none;}
+
+  .add-reward{
+    display:flex;
+    gap:6px;
+    align-items:center;
+    margin-top:2px;
+  }
+  .add-reward input[type="text"], .add-reward input[type="number"]{
+    font-family:var(--font-body);
+    font-size:12.5px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    background:var(--surface-2);
+    color:var(--ink);
+    padding:5px 8px;
+  }
+  .add-reward input[type="text"]{flex:1; min-width:0;}
+  .add-reward input[type="number"]{width:56px;}
+
+  /* ---------- Footer ---------- */
+  .footnote{
+    border-top:1px solid var(--line);
+    padding-top:20px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+    gap:18px;
+    color:var(--muted);
+    font-size:13px;
+  }
+  .footnote h3{
+    font-family:var(--font-body);
+    font-size:13px;
+    color:var(--ink);
+    margin:0 0 6px;
+    font-weight:600;
+  }
+  .footnote p{margin:0;}
+  .footnote .src{font-family:var(--font-mono); font-size:11px; opacity:0.8;}
+
+  artifact-local{display:contents;}
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="eyebrow">Семейная система мотивации</div>
+    <h1 class="title">Трекер привычек нашей семьи</h1>
+    <p class="lede">Меньше спонтанного скролла, больше учёбы, дел по дому и времени на улице — за настоящие баллы и настоящие награды. Отмечайте вместе с детьми каждый день, а в конце недели — подводите итоги.</p>
+    <artifact-local><span class="week-chip"><span class="dot"></span><span id="week-range">Текущая неделя</span></span></artifact-local>
+  </header>
+
+  <section class="rules">
+    <h2>Правила, о которых мы договорились</h2>
+    <p class="hint">Нажмите на текст, чтобы отредактировать под свою семью — это тоже часть общей страницы.</p>
+    <div class="rules-text" contenteditable="true">
+      <p>1. Телефон убираем за час до сна и не берём в спальню на ночь.</p>
+      <p>2. За столом во время еды — без экранов, у всех.</p>
+      <p>3. Сначала дела: учёба и домашние обязанности — потом экранное время.</p>
+      <p>4. Каждый день — минимум 30–60 минут на улице, в любую погоду.</p>
+      <p>5. В воскресенье вечером собираемся все вместе, отмечаем неделю и выдаём награды.</p>
+    </div>
+  </section>
+
+  <section class="cards">
+
+    <!-- ===================== CARD 1: PRESCHOOLER ===================== -->
+    <div class="child-card card--preschool">
+      <div class="tab"></div>
+      <div class="card-head">
+        <div class="card-id">
+          <span class="age-badge">3–6 лет</span>
+          <div class="child-name" contenteditable="true">Дошкольник</div>
+        </div>
+        <div class="balance-block">
+          <span class="balance-num">0</span>
+          <span class="balance-unit">звёзд в копилке</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <p class="section-label">Каждый день</p>
+          <div class="table-scroll">
+            <table class="tracker">
+              <thead>
+                <tr>
+                  <th class="cat-col">Задание</th>
+                  <th>Пн</th><th>Вт</th><th>Ср</th><th>Чт</th><th>Пт</th><th>Сб</th><th>Вс</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-points="1"><td class="cat-col">🧸 Убрал игрушки</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                <tr data-points="1"><td class="cat-col">🪥 Почистил зубы сам</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                <tr data-points="1"><td class="cat-col">🌳 Гулял на улице</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                <tr data-points="1"><td class="cat-col">🧹 Помог по дому</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                <tr data-points="1"><td class="cat-col">📵 Экран по расписанию</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="week-total" style="margin-top:8px;">
+            <span class="week-total-num">0</span><span>звёзд набрано на этой неделе (макс. 35)</span>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button class="primary btn-close-week">Закрыть неделю → в копилку</button>
+          <button class="ghost small btn-reset-week">Сбросить неделю</button>
+        </div>
+
+        <div>
+          <p class="section-label">Меняем звёзды на</p>
+          <div class="rewards">
+            <div class="reward-item">
+              <span class="reward-name" contenteditable="true">Мультик 20 минут</span>
+              <div class="reward-right"><span class="reward-cost" contenteditable="true">5</span><span class="reward-unit">★</span><button class="small btn-redeem">Забрать</button></div>
+            </div>
+            <div class="reward-item">
+              <span class="reward-name" contenteditable="true">Прогулка с мороженым</span>
+              <div class="reward-right"><span class="reward-cost" contenteditable="true">10</span><span class="reward-unit">★</span><button class="small btn-redeem">Забрать</button></div>
+            </div>
+            <div class="reward-item">
+              <span class="reward-name" contenteditable="true">Маленькая игрушка</span>
+              <div class="reward-right"><span class="reward-cost" contenteditable="true">20</span><span class="reward-unit">★</span><button class="small btn-redeem">Забрать</button></div>
+            </div>
+            <div class="reward-item">
+              <span class="reward-name" contenteditable="true">Поход в парк аттракционов</span>
+              <div class="reward-right"><span class="reward-cost" contenteditable="true">35</span><span class="reward-unit">★</span><button class="small btn-redeem">Забрать</button></div>
+            </div>
+          </div>
+          <artifact-local>
+            <div class="add-reward">
+              <input type="text" class="new-reward-name" placeholder="своя награда...">
+              <input type="number" class="new-reward-cost" placeholder="★" min="1">
+              <button class="small btn-add-reward">+</button>
+            </div>
+          </artifact-local>
+          <artifact-local><span class="local-hint"></span></artifact-local>
+        </div>
+
+        <div>
+          <p class="section-label">История</p>
+          <ul class="history"><li class="empty">Пока пусто — впереди целая неделя</li></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== CARD 2: TWEEN 11-14 ===================== -->
+    <div class="child-card card--tween">
+      <div class="tab"></div>
+      <div class="card-head">
+        <div class="card-id">
+          <span class="age-badge">11–14 лет</span>
+          <div class="child-name" contenteditable="true">Подросток</div>
+        </div>
+        <div class="balance-block">
+          <span class="balance-num">0</span>
+          <span class="balance-unit">баллов на счету</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <p class="section-label">Каждый день</p>
+          <div class="table-scroll">
+            <table class="tracker">
+              <thead>
+                <tr>
+                  <th class="cat-col">Категория</th>
+                  <th>Пн</th><th>Вт</th><th>Ср</th><th>Чт</th><th>Пт</th><th>Сб</th><th>Вс</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-points="3"><td class="cat-col">Учёба / домашка <span class="pt">·3</span></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                <tr data-points="2"><td class="cat-col">Домашние дела <span class="pt">·2</span></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                <tr data-points="2"><td class="cat-col">Прогулка / спорт 30 мин <span class="pt">·2</span></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                <tr data-points="2"><td class="cat-col">Без телефона за час до сна <span class="pt">·2</span></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                <tr data-points="3"><td class="cat-col">В лимите экрана <span class="pt">·3</span></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="week-total" style="margin-top:8px;">
+            <span class="week-total-num">0</span><span>баллов набрано на этой неделе (макс. 84)</span>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button class="primary btn-close-week">Закрыть неделю → на счёт</button>
+          <button class="ghost small btn-reset-week">Сбросить неделю</button>
+        </div>
+
+        <div>
+          <p class="section-label">Меняем баллы на</p>
+          <div class="rewards">
+            <div class="reward-item">
+              <span class="reward-name" contenteditable="true">Час игр сверх лимита</span>
+              <div class="reward-right"><span class="reward-cost" contenteditable="true">15</span><span class="reward-unit">б.</span><button class="small btn-redeem">Забрать</button></div>
+            </div>
+            <div class="reward-item">
+              <span class="reward-name" contenteditable="true">Кино или каток с другом</span>
+              <div class="reward-right"><span class="reward-cost" contenteditable="true">25</span><span class="reward-unit">б.</span><button class="small btn-redeem">Забрать</button></div>
+            </div>
+            <div class="reward-item">
+              <span class="reward-name" contenteditable="true">Карманные деньги</span>
+              <div class="reward-right"><span class="reward-cost" contenteditable="true">40</span><span class="reward-unit">б.</span><button class="small btn-redeem">Забрать</button></div>
+            </div>
+            <div class="reward-item">
+              <span class="reward-name" contenteditable="true">Крупная награда (квест, гаджет-мелочь)</span>
+              <div class="reward-right"><span class="reward-cost" contenteditable="true">70</span><span class="reward-unit">б.</span><button class="small btn-redeem">Забрать</button></div>
+            </div>
+          </div>
+          <artifact-local>
+            <div class="add-reward">
+              <input type="text" class="new-reward-name" placeholder="своя награда...">
+              <input type="number" class="new-reward-cost" placeholder="б." min="1">
+              <button class="small btn-add-reward">+</button>
+            </div>
+          </artifact-local>
+          <artifact-local><span class="local-hint"></span></artifact-local>
+        </div>
+
+        <div>
+          <p class="section-label">История</p>
+          <ul class="history"><li class="empty">Пока пусто — впереди целая неделя</li></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== CARD 3: TEEN 15-17 ===================== -->
+    <div class="child-card card--teen">
+      <div class="tab"></div>
+      <div class="card-head">
+        <div class="card-id">
+          <span class="age-badge">15–17 лет</span>
+          <div class="child-name" contenteditable="true">Старший подросток</div>
+        </div>
+        <div class="balance-block">
+          <span class="balance-num">0</span>
+          <span class="balance-unit">баллов на счету</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <p class="section-label">Каждый день — сам(а) отмечает вечером</p>
+          <div class="table-scroll">
+            <table class="tracker">
+              <thead>
+                <tr>
+                  <th class="cat-col">Категория</th>
+                  <th>Пн</th><th>Вт</th><th>Ср</th><th>Чт</th><th>Пт</th><th>Сб</th><th>Вс</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-points="3"><td class="cat-col">Учёба / подготовка <span class="pt">·3</span></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                <tr data-points="2"><td class="cat-col">Домашние обязанности <span class="pt">·2</span></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                <tr data-points="2"><td class="cat-col">Спорт / встречи офлайн <span class="pt">·2</span></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                <tr data-points="2"><td class="cat-col">Экран выключен после 22:00 <span class="pt">·2</span></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                <tr data-points="3"><td class="cat-col">Держит недельный лимит сам <span class="pt">·3</span></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="week-total" style="margin-top:8px;">
+            <span class="week-total-num">0</span><span>баллов набрано на этой неделе (макс. 84)</span>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button class="primary btn-close-week">Закрыть неделю → на счёт</button>
+          <button class="ghost small btn-reset-week">Сбросить неделю</button>
+        </div>
+
+        <div>
+          <p class="section-label">Меняем баллы на</p>
+          <div class="rewards">
+            <div class="reward-item">
+              <span class="reward-name" contenteditable="true">На час позже отбой</span>
+              <div class="reward-right"><span class="reward-cost" contenteditable="true">15</span><span class="reward-unit">б.</span><button class="small btn-redeem">Забрать</button></div>
+            </div>
+            <div class="reward-item">
+              <span class="reward-name" contenteditable="true">Поездка без лишних вопросов</span>
+              <div class="reward-right"><span class="reward-cost" contenteditable="true">25</span><span class="reward-unit">б.</span><button class="small btn-redeem">Забрать</button></div>
+            </div>
+            <div class="reward-item">
+              <span class="reward-name" contenteditable="true">Прибавка к карманным деньгам</span>
+              <div class="reward-right"><span class="reward-cost" contenteditable="true">40</span><span class="reward-unit">б.</span><button class="small btn-redeem">Забрать</button></div>
+            </div>
+            <div class="reward-item">
+              <span class="reward-name" contenteditable="true">Поездка с друзьями на выходные</span>
+              <div class="reward-right"><span class="reward-cost" contenteditable="true">70</span><span class="reward-unit">б.</span><button class="small btn-redeem">Забрать</button></div>
+            </div>
+          </div>
+          <artifact-local>
+            <div class="add-reward">
+              <input type="text" class="new-reward-name" placeholder="своя награда...">
+              <input type="number" class="new-reward-cost" placeholder="б." min="1">
+              <button class="small btn-add-reward">+</button>
+            </div>
+          </artifact-local>
+          <artifact-local><span class="local-hint"></span></artifact-local>
+        </div>
+
+        <div>
+          <p class="section-label">История</p>
+          <ul class="history"><li class="empty">Пока пусто — впереди целая неделя</li></ul>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <footer class="footnote">
+    <div>
+      <h3>Как этим пользоваться</h3>
+      <p>Каждый день ребёнок сам отмечает галочки. В воскресенье вечером — семейный совет: смотрите таблицу вместе, нажимаете «Закрыть неделю», баллы уходят в копилку, галочки обнуляются. Названия и стоимость наград можно менять прямо на странице.</p>
+    </div>
+    <div>
+      <h3>Если нужен и технический контроль</h3>
+      <p>Мотивация работает лучше вместе с базовыми техническими границами на телефоне: Google Family Link (бесплатно для Android) позволяет ставить дневной лимит экрана, время «отбоя» устройства и одобрять установку приложений — как страховка, а не замена договорённостям.</p>
+    </div>
+    <div>
+      <h3>Источники по возрастным нормам</h3>
+      <p>Ориентиры на этой странице опираются на рекомендации Американской академии педиатрии (AAP): для 2–5 лет — не более часа качественного контента в день; для школьников и подростков — баланс экрана с учёбой, сном, спортом и живым общением важнее жёсткого лимита в часах; перерыв — каждые 30 минут; экран — не позже, чем за час до сна.</p>
+      <p class="src">CHOC Children's Health Hub · Children's Hospital Los Angeles</p>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var DAYS = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+
+  function pad(n){ return n < 10 ? "0"+n : ""+n; }
+  function fmtDate(d){ return pad(d.getDate())+"."+pad(d.getMonth()+1); }
+
+  function setWeekRange(){
+    var el = document.getElementById("week-range");
+    if(!el) return;
+    var now = new Date();
+    var day = now.getDay(); // 0 Sun .. 6 Sat
+    var mondayOffset = day === 0 ? -6 : 1 - day;
+    var monday = new Date(now);
+    monday.setDate(now.getDate() + mondayOffset);
+    var sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    el.textContent = "Текущая неделя: " + fmtDate(monday) + " – " + fmtDate(sunday);
+
+    // highlight today's column in every tracker table (local-only, purely visual)
+    var todayIdx = day === 0 ? 6 : day - 1; // 0=Mon..6=Sun
+    document.querySelectorAll("table.tracker").forEach(function(table){
+      var headerCells = table.querySelectorAll("thead th");
+      // headerCells[0] is the category column, days start at index 1
+      var headCell = headerCells[todayIdx + 1];
+      if(headCell) headCell.classList.add("today");
+      table.querySelectorAll("tbody tr").forEach(function(row){
+        var cells = row.querySelectorAll("td");
+        var cell = cells[todayIdx + 1];
+        if(cell) cell.classList.add("today");
+      });
+    });
+  }
+
+  function todayLabel(){
+    var now = new Date();
+    return pad(now.getDate())+"."+pad(now.getMonth()+1);
+  }
+
+  function recomputeCard(card){
+    var table = card.querySelector("table.tracker");
+    var total = 0;
+    table.querySelectorAll("tbody tr").forEach(function(row){
+      var weight = parseInt(row.getAttribute("data-points"), 10) || 0;
+      var checked = row.querySelectorAll('input[type="checkbox"]:checked').length;
+      total += weight * checked;
+    });
+    var totalEl = card.querySelector(".week-total-num");
+    if(totalEl) totalEl.textContent = String(total);
+    return total;
+  }
+
+  function addHistory(card, text){
+    var list = card.querySelector(".history");
+    var empty = list.querySelector("li.empty");
+    if(empty) empty.remove();
+    var li = document.createElement("li");
+    var left = document.createElement("span");
+    left.textContent = text;
+    var right = document.createElement("span");
+    right.textContent = todayLabel();
+    li.appendChild(left);
+    li.appendChild(right);
+    list.insertBefore(li, list.firstChild);
+    // cap history at 6 entries
+    var items = list.querySelectorAll("li:not(.empty)");
+    if(items.length > 6){
+      list.removeChild(items[items.length - 1]);
+    }
+  }
+
+  function showHint(card, msg){
+    var hint = card.querySelector(".local-hint");
+    if(!hint) return;
+    hint.textContent = msg;
+    window.setTimeout(function(){ hint.textContent = ""; }, 2600);
+  }
+
+  function initCard(card){
+    var table = card.querySelector("table.tracker");
+    recomputeCard(card);
+
+    table.addEventListener("change", function(e){
+      if(e.target && e.target.matches('input[type="checkbox"]')){
+        recomputeCard(card);
+      }
+    });
+
+    var closeBtn = card.querySelector(".btn-close-week");
+    closeBtn.addEventListener("click", function(){
+      var total = recomputeCard(card);
+      if(total <= 0){
+        showHint(card, "Пока нечего закрывать — неделя пустая");
+        return;
+      }
+      var balanceEl = card.querySelector(".balance-num");
+      var current = parseInt(balanceEl.textContent, 10) || 0;
+      balanceEl.textContent = String(current + total);
+      table.querySelectorAll('input[type="checkbox"]:checked').forEach(function(cb){ cb.checked = false; });
+      recomputeCard(card);
+      addHistory(card, "Неделя закрыта: +" + total);
+    });
+
+    var resetBtn = card.querySelector(".btn-reset-week");
+    var confirming = false;
+    var resetTimer = null;
+    resetBtn.addEventListener("click", function(){
+      if(!confirming){
+        confirming = true;
+        resetBtn.textContent = "Точно сбросить?";
+        resetTimer = window.setTimeout(function(){
+          confirming = false;
+          resetBtn.textContent = "Сбросить неделю";
+        }, 3000);
+        return;
+      }
+      window.clearTimeout(resetTimer);
+      confirming = false;
+      resetBtn.textContent = "Сбросить неделю";
+      table.querySelectorAll('input[type="checkbox"]:checked').forEach(function(cb){ cb.checked = false; });
+      recomputeCard(card);
+    });
+
+    card.querySelectorAll(".reward-item").forEach(function(item){
+      var btn = item.querySelector(".btn-redeem");
+      btn.addEventListener("click", function(){
+        var costEl = item.querySelector(".reward-cost");
+        var nameEl = item.querySelector(".reward-name");
+        var cost = parseInt(costEl.textContent, 10) || 0;
+        var balanceEl = card.querySelector(".balance-num");
+        var current = parseInt(balanceEl.textContent, 10) || 0;
+        if(current < cost){
+          showHint(card, "Пока не хватает баллов (" + current + " из " + cost + ")");
+          return;
+        }
+        balanceEl.textContent = String(current - cost);
+        addHistory(card, "Награда «" + nameEl.textContent.trim() + "» − " + cost);
+      });
+    });
+
+    var addBtn = card.querySelector(".btn-add-reward");
+    if(addBtn){
+      addBtn.addEventListener("click", function(){
+        var nameInput = card.querySelector(".new-reward-name");
+        var costInput = card.querySelector(".new-reward-cost");
+        var name = (nameInput.value || "").trim();
+        var cost = parseInt(costInput.value, 10);
+        if(!name || !cost || cost <= 0){
+          showHint(card, "Впишите название и баллы для награды");
+          return;
+        }
+        var rewardsList = card.querySelector(".rewards");
+        var unit = card.querySelector(".reward-unit").textContent;
+        var row = document.createElement("div");
+        row.className = "reward-item";
+        row.innerHTML = '<span class="reward-name" contenteditable="true"></span>' +
+          '<div class="reward-right"><span class="reward-cost" contenteditable="true"></span>' +
+          '<span class="reward-unit"></span><button class="small btn-redeem">Забрать</button></div>';
+        row.querySelector(".reward-name").textContent = name;
+        row.querySelector(".reward-cost").textContent = String(cost);
+        row.querySelector(".reward-unit").textContent = unit;
+        rewardsList.appendChild(row);
+        row.querySelector(".btn-redeem").addEventListener("click", function(){
+          var costEl = row.querySelector(".reward-cost");
+          var nameEl = row.querySelector(".reward-name");
+          var c = parseInt(costEl.textContent, 10) || 0;
+          var balanceEl = card.querySelector(".balance-num");
+          var current = parseInt(balanceEl.textContent, 10) || 0;
+          if(current < c){
+            showHint(card, "Пока не хватает баллов (" + current + " из " + c + ")");
+            return;
+          }
+          balanceEl.textContent = String(current - c);
+          addHistory(card, "Награда «" + nameEl.textContent.trim() + "» − " + c);
+        });
+        nameInput.value = "";
+        costInput.value = "";
+      });
+    }
+  }
+
+  document.querySelectorAll(".child-card").forEach(initCard);
+  setWeekRange();
+})();
+</script>
